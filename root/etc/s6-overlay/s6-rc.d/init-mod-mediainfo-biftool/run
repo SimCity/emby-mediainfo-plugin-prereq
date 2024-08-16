@@ -37,6 +37,11 @@ fi
 export DEBIAN_FRONTEND="noninteractive"
 
 if [ ! -e /bin/biftool ] || [ ! -e /bin/biftool_processor ]; then
+    if ! dpkg -s unzip >/dev/null 2>&1; then
+        echo "unzip missing, attempting to install again"
+        sudo apt install unzip
+        # exit 0
+    fi
     echo "**** Installing/updating BifTool Executables ****"
 	# Download BifTool Executables
 	curl -Lo /tmp/biftool_linux.zip https://github.com/rokudev/samples/raw/master/utilities/bif%20tool/biftool_linux.zip
