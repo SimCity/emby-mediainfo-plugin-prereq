@@ -1,0 +1,78 @@
+#!/usr/bin/with-contenv bash
+
+if [[ "$(uname -m)" == "armv7l" ]]; then
+cat <<-EOF
+    *******************************************************
+    *******************************************************
+    *                                                     *
+    *                         !!!!                        *
+    *   MediaInfo-PreReq mod is not supported on armhf.   *
+    *                                                     *
+    *******************************************************
+    *******************************************************
+EOF
+exit 0
+fi
+
+if [ ! -f /usr/bin/apt ]; then
+cat <<-EOF
+    ********************************************************
+    ********************************************************
+    *                                                      *
+    *                         !!!!                         *
+    *   MediaInfo-PreReq mod is only supported on images   *
+    *             using an Ubuntu base image.              *
+    *                                                      *
+    ********************************************************
+    ********************************************************
+EOF
+exit 0
+fi
+
+
+# Check for MKVToolNix repository
+if [ ! -e /etc/apt/sources.list.d/mkvtoolnix.download.list ] ; then
+	# Import MKVToolNix GPG key 
+	curl -o /usr/share/keyrings/gpg-pub-moritzbunkus.gpg https://mkvtoolnix.download/gpg-pub-moritzbunkus.gpg
+
+	# Add MKVToolNix repository
+    echo "Add mkvtoolnix repo to source list"
+	echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ jammy main
+deb-src [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ jammy main
+deb http://archive.ubuntu.com/ubuntu/ jammy universe
+deb-src http://archive.ubuntu.com/ubuntu/ jammy universe
+deb http://archive.ubuntu.com/ubuntu/ jammy main
+deb-src http://archive.ubuntu.com/ubuntu/ jammy main" >> /etc/apt/sources.list.d/mkvtoolnix.download.list
+
+fi
+
+# Check for unzip 
+if ! dpkg -s unzip >/dev/null 2>&1 && [[ ${INCLUDE_BIFTOOL} == "TRUE" ]]; then
+    echo "Add unzip to package list"
+    PACKAGES="unzip ${PACKAGES}"
+fi
+
+# Check for MediaInfoCLI 
+if ! dpkg -s mediainfo >/dev/null 2>&1; then
+    echo "Add mediainfo to package list"
+    PACKAGES="mediainfo ${PACKAGES}"
+fi
+
+# Check for mkvtoolnix Portable
+if ! dpkg -s mkvtoolnix >/dev/null 2>&1; then
+    echo "Add mkvtoolnix=70.0.0-0~ubuntu2204bunkus01 to package list"
+    PACKAGES="mkvtoolnix=70.0.0-0~ubuntu2204bunkus01 ${PACKAGES}" #NOTE: Specific version is used by Media Info Plugin. Refer to Plugin wiki for details
+fi
+
+# Check for mkvtoolnix Portable GUI
+if ! dpkg -s mkvtoolnix-gui >/dev/null 2>&1; then
+    echo "Add mkvtoolnix-gui=70.0.0-0~ubuntu2204bunkus01 to package list"
+    PACKAGES="mkvtoolnix-gui=70.0.0-0~ubuntu2204bunkus01 ${PACKAGES}"
+fi
+
+if [ -n "${PACKAGES}" ]; then
+    echo "${PACKAGES}" >> /mod-repo-packages-to-install.list
+    echo "**** Adding MediaInfo Plugin dependencies to package install list ****"
+else
+    echo "**** MediaInfo Plugin dependencies already installed, skipping ****"
+fi

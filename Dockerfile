@@ -2,7 +2,7 @@
 
 FROM scratch
 
-LABEL maintainer="username"
+LABEL maintainer="SimCity"
 
 # copy local files
 COPY root/ /

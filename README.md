@@ -1,25 +1,73 @@
-# Rsync - Docker mod for openssh-server
+# Emby MediaInfo Plugin Pre-Requisite Applications Mod
 
-This mod adds rsync to openssh-server, to be installed/updated during container start.
+Installs the appications required by the [MediaInfo Plugin](https://emby.media/community/index.php?/topic/108984-mediainfo-for-emby-pluginhdr-vision-atmos-dtsx/)
 
-In openssh-server docker arguments, set an environment variable `DOCKER_MODS=linuxserver/mods:openssh-server-rsync`
+This is based off of [Docker-MediaInfo-PreReq](https://github.com/MrLinford/Docker-MediaInfo-PreReq/tree/main) by MrLinford.
+
+It will perform all of the setting up of the applications the MediaInfo plugin uses to read and modify your media files as per the first step of the initial setup process.
+
+> **Note**
+> It will not set anything up in Emby, this is left to the user to setup.
+> Everything is setup under /bin/
+
+Follow [Cheesgeezer's wiki](https://github.com/Cheesegeezer/MediaInfoWiki/wiki) on how to use the plugin for details on how to do everything else.
+
+Following will be installed:
+
+* MediaInfoCLI
+* mkvtoolnix Portable (refer to MediaInfo wiki for details regarding version installed)
+* mkvtoolnix Portable GUI
+
+Optional:
+* BifTool Executables (also installs unzip to unpack)
+
+If you wish to also use MediaInfo's BIF Generator, you will need to also add an environment variable to include BifTool so that this will be avaiable for use.
+
+To include BifTool add an environment variable:
+  INCLUDE_BIFTOOL=TRUE
+
+The Following locations are required to be entered into MediaInfos settings in the relevant fields:
+* /bin/mediainfo
+* /bin/mkvpropedit
+* /bin/biftool
 
 If adding multiple mods, enter them in an array separated by `|`, such as `DOCKER_MODS=linuxserver/mods:openssh-server-rsync|linuxserver/mods:openssh-server-mod2`
 
-# Mod creation instructions
+Full example:
 
-* Fork the repo, create a new branch based on the branch `template`.
-* Edit the `Dockerfile` for the mod. `Dockerfile.complex` is only an example and included for reference; it should be deleted when done.
-* Inspect the `root` folder contents. Edit, add and remove as necessary.
-* After all init scripts and services are created, run `find ./  -path "./.git" -prune -o \( -name "run" -o -name "finish" -o -name "check" \) -not -perm -u=x,g=x,o=x -print -exec chmod +x {} +` to fix permissions.
-* Edit this readme with pertinent info, delete these instructions.
-* Finally edit the `.github/workflows/BuildImage.yml`. Customize the vars for `BASEIMAGE` and `MODNAME`. Set the versioning logic and `MULTI_ARCH` if needed.
-* Ask the team to create a new branch named `<baseimagename>-<modname>`. Baseimage should be the name of the image the mod will be applied to. The new branch will be based on the `template` branch.
-* Submit PR against the branch created by the team.
+docker run
+```bash
+docker create \
+  --name=emby \
+  -e DOCKER_MODS=ghcr.io/simcity/emby-mediainfo-plugin-prereq:latest \
+  -e INCLUDE_BIFTOOL=TRUE \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=Europe/London \
+  -p 8096:8096 \
+  -v <path to data>:/config \
+  -v <path/to/media>:/media \
+  --restart unless-stopped \
+  linuxserver/emby
+```
+ docker compose
+```yaml
+---
+services:
+  emby:
+    image: linuxserver/emby:latest
+    container_name: emby
+    environment:
+      - DOCKER_MODS=ghcr.io/simcity/emby-mediainfo-plugin-prereq:latest
+      - INCLUDE_BIFTOOL=TRUE #optional
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /path/to/data:/config
+      - /path/to/media:/media #optional
+    ports:
+      - 8096:8096
+    restart: unless-stopped
+```
 
-
-## Tips and tricks
-
-* Some images have helpers built in, these images are currently:
-    * [Openvscode-server](https://github.com/linuxserver/docker-openvscode-server/pull/10/files)
-    * [Code-server](https://github.com/linuxserver/docker-code-server/pull/95)

@@ -1,0 +1,53 @@
+#!/usr/bin/with-contenv bash
+if [[ ${INCLUDE_BIFTOOL} != "TRUE" ]]; then
+
+    echo "INCLUDE_BIFTOOL = ${INCLUDE_BIFTOOL} "
+	echo "**** Skipping BifTool Executables ****"
+	exit 0
+fi
+if [[ "$(uname -m)" == "armv7l" ]]; then
+cat <<-EOF
+    ********************************************************
+    ********************************************************
+    *                                                      *
+    *                         !!!!                         *
+    *   MediaInfo-PreReq mod is not supported on armhf.    *
+    *                                                      *
+    ********************************************************
+    ********************************************************
+EOF
+exit 0
+fi
+
+if [ ! -f /usr/bin/apt ]; then
+cat <<-EOF
+    ********************************************************
+    ********************************************************
+    *                                                      *
+    *                         !!!!                         *
+    *   MediaInfo-PreReq mod is only supported on images   *
+    *             using an Ubuntu base image.              *
+    *                                                      *
+    ********************************************************
+    ********************************************************
+EOF
+exit 0
+fi
+
+export DEBIAN_FRONTEND="noninteractive"
+
+if [ ! -e /bin/biftool ] || [ ! -e /bin/biftool_processor ]; then
+    if ! dpkg -s unzip >/dev/null 2>&1; then
+        echo "unzip missing, attempting to install again"
+        apt install unzip
+        # exit 0
+    fi
+    echo "**** Installing/updating BifTool Executables ****"
+	# Download BifTool Executables
+	curl -Lo /tmp/biftool_linux.zip https://github.com/rokudev/samples/raw/master/utilities/bif%20tool/biftool_linux.zip
+
+	# Extract BifTool files to /bin/
+	unzip /tmp/biftool_linux.zip -d /bin
+else
+    echo "**** BifTool Executables already installed, skipping ****"
+fi
