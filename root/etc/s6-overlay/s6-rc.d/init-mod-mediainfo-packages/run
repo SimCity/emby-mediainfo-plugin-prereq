@@ -45,13 +45,13 @@ fi
 # with the abae image hanging to noble, teh version of mkvtoolnix taht is required has dependencies no longer packaged
 # add the jammy repos where these deps can be found until such time as noble repos implement them (if they ever do)
 if ! grep -E -q 'deb\s+http://archive\.ubuntu\.com/ubuntu/ +jammy.*main' /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-    echo "deb http://archive.ubuntu.com/ubuntu/ jammy universe" >> /etc/apt/sources.list
+    echo "deb http://archive.ubuntu.com/ubuntu/ jammy main" >> /etc/apt/sources.list
 fi
 if ! grep -E -q 'deb\s+http://archive\.ubuntu\.com/ubuntu/ +jammy.*universe' /etc/apt/sources.list /etc/apt/sources.list.d/*; then
     echo "deb http://archive.ubuntu.com/ubuntu/ jammy universe" >> /etc/apt/sources.list
 fi
 if ! grep -E -q 'deb-src\s+http://archive\.ubuntu\.com/ubuntu/ +jammy.*main' /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-    echo "deb-src http://archive.ubuntu.com/ubuntu/ jammy universe" >> /etc/apt/sources.list
+    echo "deb-src http://archive.ubuntu.com/ubuntu/ jammy main" >> /etc/apt/sources.list
 fi
 if ! grep -E -q 'deb-src\s+http://archive\.ubuntu\.com/ubuntu/ +jammy.*universe' /etc/apt/sources.list /etc/apt/sources.list.d/*; then
     echo "deb-src http://archive.ubuntu.com/ubuntu/ jammy universe" >> /etc/apt/sources.list
