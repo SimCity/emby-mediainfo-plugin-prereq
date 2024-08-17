@@ -38,12 +38,11 @@ if [ ! -e /etc/apt/sources.list.d/mkvtoolnix.download.list ] ; then
 	# Add MKVToolNix repository
     echo "Add mkvtoolnix repo to source list"
 	echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ jammy main
-	deb-src [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ jammy main" >> /etc/apt/sources.list.d/mkvtoolnix.download.list
-    echo "
-    deb http://archive.ubuntu.com/ubuntu/ jammy universe
-    deb-src http://archive.ubuntu.com/ubuntu/ jammy universe
-    deb http://archive.ubuntu.com/ubuntu/ jammy main
-    deb-src http://archive.ubuntu.com/ubuntu/ jammy main" >> /etc/apt/sources.list
+deb-src [arch=amd64 signed-by=/usr/share/keyrings/gpg-pub-moritzbunkus.gpg] https://mkvtoolnix.download/ubuntu/ jammy main" >> /etc/apt/sources.list.d/mkvtoolnix.download.list
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-master-keyring.gpg] http://archive.ubuntu.com/ubuntu/ jammy universe
+deb-src [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-master-keyring.gpg] http://archive.ubuntu.com/ubuntu/ jammy universe
+deb [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-master-keyring.gpg] http://archive.ubuntu.com/ubuntu/ jammy main
+deb-src [arch=amd64 signed-by=/usr/share/keyrings/ubuntu-master-keyring.gpg] http://archive.ubuntu.com/ubuntu/ jammy main" >> /etc/apt/sources.list
 
 fi
 
